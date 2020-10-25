@@ -7,48 +7,48 @@ env:
     region: us-east-1
 jobs:
     env:
-        name: Load environment vars from .env files
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Dev vars
-              if: contains(github.ref, 'develop')
-              run: for v in `cat .github/workflows/dev.env` ; do echo "::set-env name=${v%%=*}::${v##*=}" ; done
-            - name: Prod vars
-              if: contains(github.ref, 'main')
-              run: for v in `cat .github/workflows/prod.env`; do echo "::set-env name=${v%%=*}::${v##*=}" ; done
-            outputs:
-            environment: ${{env.environment}}
-            region: ${{env.region}}
+      name: Load environment vars from .env files
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Dev vars
+          if: contains(github.ref, 'develop')
+          run: for v in `cat .github/workflows/dev.env` ; do echo "::set-env name=${v%%=*}::${v##*=}" ; done
+        - name: Prod vars
+          if: contains(github.ref, 'main')
+          run: for v in `cat .github/workflows/prod.env`; do echo "::set-env name=${v%%=*}::${v##*=}" ; done
+      outputs:
+        environment: ${{env.environment}}
+        region: ${{env.region}}
     deploy:
-        name: Deploy|${{needs.env.outputs.environment}}
-        needs: env
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Configure AWS Credentials
-              id: creds
-              uses: aws-actions/configure-aws-credentials@v1
-              with:
-                aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-                aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-                aws-region: ${{needs.env.outputs.region}}
-            - name: Set up Python
-              uses: actions/Setup-python@v2
-              with:
-                python-version: '3.7.7'
-            - name: Install dependencies for etl lambda
-              run: 'pip install -r spotify-ml/etl/requirements.txt -t .'
-            - name: Serverless Deploy
-              uses: serverless/github-actions@v1.53.0
-              with:
-                args: -c "serverless deploy --stage ${{needs.env.outputs.environment}}"
-                entrypoint: /bin/bash
-              env:
-                environment: ${{needs.env.outputs.environment}}
-                AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-                AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-                SPOTIPY_CLIENT_ID: ${{secrets.SPOTIPY_CLIENT_ID}}
-                SPOTIPY_CLIENT_SECRET: ${{secrets.SPOTIPY_CLIENT_SECRET}}
+      name: Deploy|${{needs.env.outputs.environment}}
+      needs: env
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Configure AWS Credentials
+          id: creds
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws-region: ${{needs.env.outputs.region}}
+        - name: Set up Python
+          uses: actions/Setup-python@v2
+          with:
+            python-version: '3.7.7'
+        - name: Install dependencies for etl lambda
+          run: 'pip install -r spotify-ml/etl/requirements.txt -t .'
+        - name: Serverless Deploy
+          uses: serverless/github-actions@v1.53.0
+          with:
+            args: -c "serverless deploy --stage ${{needs.env.outputs.environment}}"
+            entrypoint: /bin/bash
+          env:
+            environment: ${{needs.env.outputs.environment}}
+            AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+            AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            SPOTIPY_CLIENT_ID: ${{secrets.SPOTIPY_CLIENT_ID}}
+            SPOTIPY_CLIENT_SECRET: ${{secrets.SPOTIPY_CLIENT_SECRET}}
