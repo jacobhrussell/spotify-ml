@@ -40,7 +40,7 @@ jobs:
           with:
             python-version: '3.7.7'
         - name: Install dependencies for etl lambda
-          run: 'pip install -r spotify-ml/etl/requirements.txt -t .'
+          run: 'pip install -r spotify_ml/etl/requirements.txt -t .'
         - name: Serverless Deploy
           uses: serverless/github-action@v1.53.0
           with:
