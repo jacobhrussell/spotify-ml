@@ -1,7 +1,7 @@
 name: Env and Deploy
 on:
     push:
-        branches: [develop, meain]
+        branches: [develop, main]
 env:
     name: spotify-ml
     region: us-east-1
