@@ -14,7 +14,7 @@ functions:
                 - spotify_ml/services/spotify_service.py
                 - spotify_ml/helperrs/env_helper.py
         events:
-            - schedule: cron(0 1 * * FRI *) # 1am every Friday
+            - schedule: cron(0 1 ? * FRI *) # 1am every Friday
         environment:
             Environment: ${env:environment}
             SPOTIPY_CLIENT_ID: ${env:SPOTIPY_CLIENT_ID}
