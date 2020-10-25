@@ -1,0 +1,60 @@
+service: spotify-ml
+
+provider:
+    name: aws
+    runtime: python3.7
+
+functions:
+    spotify-ml-etl:
+        name: ${env:environment}-spotify-ml-etl
+        handler: spotify_ml/etl/spotify_etl_lambda_function.lambda_handler
+        timeout: 900
+        package:
+            include:
+                - spotify_ml/services/spotify_service.py
+                - spotify_ml/helperrs/env_helper.py
+        events:
+            - schedule: cron(0 1 * * FRI) # 1am every Friday
+        environment:
+            Environment: ${env:environment}
+            SPOTIPY_CLIENT_ID: ${env:SPOTIPY_CLIENT_ID}
+            SPOTIPY_CLIENT_SECRET: ${env:SPOTIPY_CLIENT_SECRET}
+
+resources:
+    Resources:
+        SpotifyAnalysisBucket:
+            Type: 'AWS::S3::Bucket'
+            Properties:
+                AccessControl: Private
+                BucketName: ${env:environment}-spotify-analysis-bucket
+                PublicAccessBlockConfiguration:
+                    BlockPublicAcls: True
+                    BlockPublicPolicy: True
+                    IgnorePublicAcls: True
+                    RestrictPublicBuckets: True
+        SpotifyAnalysisBucketPolicy:
+            Type: 'AWS::S3::BucketPolicy'
+            Properties:
+                Bucket:
+                    Ref: SpotifyAnalysisBucket
+                PolicyStatement:
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                            - 's3:GetObject'
+                            - 's3:PutObject'
+                            - 's3:DeleteObject'
+                            - 's3:ListBucket'
+                            - 's3:PutBucketNotification'
+                          Principal:
+                            AWS:
+                                - Fn::Join:
+                                  - ''
+                                  - - 'arn:aws:iam::'
+                                    - Ref: AWS::AccountId
+                                    - ':role/spotify-ml-'
+                                    - ${env:environment}
+                                    - '-us-east-1-lambdaRole'
+                          Resource:
+                            - arn:aws:s3:::${env:environment}-spotify-analysis-bucket
+                            - arn:aws:s3:::${env:environment}-spotify-analysis-bucket/*

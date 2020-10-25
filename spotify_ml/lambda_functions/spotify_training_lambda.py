@@ -8,6 +8,7 @@ import numpy as np
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from services.spotify_service import SpotifyService
+from helpers.env_helper import EnvHelper
 
 scope = "user-library-read"
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope), requests_timeout=10)
@@ -25,15 +26,15 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 
 
 session = boto3.Session()
-
 spotify_service = SpotifyService()
+env_helper = EnvHelper()
 
 def lambda_handler(event, context):
 
     print("Getting data from S3")
     s3_client = session.client('s3')
-    bucket_name = 'dev-sagemaker-input-bucket'
-    content_object = s3_client.get_object(Bucket=bucket_name, Key='spotify_input.csv')
+    bucket_name = env_helper.get_env() + '-spotify-analysis-bucket'
+    content_object = s3_client.get_object(Bucket=bucket_name, Key='spotify_analysis.csv')
     gz = gzip.GzipFile(fileobj=content_object['Body'])
     track_data = pd.read_csv(gz, dtype=str)
 

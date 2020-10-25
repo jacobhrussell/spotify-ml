@@ -2,6 +2,7 @@ import sys
 sys.path.append('spotify_ml')
 
 from services.spotify_service import SpotifyService
+from helpers.env_helper import EnvHelper
 import boto3
 import json
 import pandas as pd
@@ -9,8 +10,8 @@ import io
 import gzip
 
 session = boto3.Session()
-
 spotify_service = SpotifyService()
+env_helper = EnvHelper()
 
 def lambda_handler(event, context):
 
@@ -55,19 +56,18 @@ def lambda_handler(event, context):
         data.append(track_feature_analysis['analysis']['track']['mode_confidence'])
         transformed_data.append(data)
 
-    # put transformed data into a pandas data fame
-    # this will help us stream into S3
+    # put transformed data into a pandas data fame; this will help us stream into S3
     spotify_df = pd.DataFrame(transformed_data)
     spotify_df.columns = header_row
 
     print("Putting data in S3")
     # Getting S3 bucket
     s3 = session.resource('s3')
-    bucket_name = 'dev-sagemaker-input-bucket'
+    bucket_name = env_helper.get_env() + '-spotify-analysis-bucket'
     bucket = s3.Bucket(bucket_name)
 
     # Deleting old object in bucket
-    s3.Object(bucket_name, 'spotify_input.json').delete()
+    s3.Object(bucket_name, 'spotify_analysis.csv').delete()
 
     # Putting new object in bucket
     # write df to string stream
@@ -85,8 +85,5 @@ def lambda_handler(event, context):
         gz_file.write(bytes(csv_buffer.getvalue(), 'utf-8'))
 
     # write stream to S3
-    s3_object = s3.Object(bucket_name, 'spotify_input.csv')
+    s3_object = s3.Object(bucket_name, 'spotify_analysis.csv')
     s3_object.put(Body=gz_buffer.getvalue())
-
-if __name__ == "__main__":
-    lambda_handler(None, None)
