@@ -46,7 +46,6 @@ class SpotifyService:
 
         return new_tracks
 
-
     def get_new_albums(self):
         new_albums = []
         results = sp.new_releases(limit=50)
