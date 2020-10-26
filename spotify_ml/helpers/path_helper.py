@@ -1,7 +1,7 @@
 import os
 import re
 
-class PathHelperr:
+class PathHelper:
 
     def __init__(self):
         pass
