@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 def lambda_handler(event, context):
     if event.get('path'):
-        event['path'] = path_helper.remove_base_path(event['path'])
         return awsgi.response(app, event, context)
     else:
         return 400
