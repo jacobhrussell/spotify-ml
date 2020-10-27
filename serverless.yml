@@ -23,15 +23,11 @@ functions:
         name: ${env:environment}-spotify-ml-api
         handler: spotify_ml/api/spotify_ml_api_lambda_function.lambda_handler
         timeout: 10
-        package:
-            include:
-                - spotify_ml/helpers/path_helper.py
         events:
             - http: ANY /
             - http: 'ANY {proxy+}'
         environment:
             Environment: ${env:environment}
-            BASE_PATH: 'BASE_PATH'
 
 resources:
     Resources:
