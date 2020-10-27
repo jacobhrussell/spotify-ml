@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     else:
         return 400
 
-@app.route('/get-recommended-songs', methods=['GET'])
+@app.route('/recommended-songs', methods=['GET'])
 def get_recommended_songs():
     recommended_songs = []
     return jsonify(status=200, response=recommended_songs)
@@ -24,8 +24,3 @@ def get_recommended_songs():
 def get_search_song():
     search_results = []
     return jsonify(status=200, response=search_results)
-
-@app.route('/test', methods=['GET'])
-def get_test():
-    response = "Hello world"
-    return jsonify(status=200, response=response)
