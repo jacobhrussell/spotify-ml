@@ -3,8 +3,6 @@ sys.path.append('spotify_ml')
 import awsgi
 from flask import (Flask, jsonify, request)
 
-path_helper = PathHelper()
-
 
 app = Flask(__name__)
 
