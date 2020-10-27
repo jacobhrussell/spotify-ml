@@ -21,7 +21,7 @@ functions:
             SPOTIPY_CLIENT_SECRET: ${env:SPOTIPY_CLIENT_SECRET}
     spotify-ml-api:
         name: ${env:environment}-spotify-ml-api
-        handler: spotify-ml/api/spotify_ml_api_lambda_function.lambda_handler
+        handler: spotify_ml/api/spotify_ml_api_lambda_function.lambda_handler
         timeout: 10
         package:
             include:
