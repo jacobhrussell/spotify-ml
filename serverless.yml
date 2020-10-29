@@ -19,10 +19,16 @@ functions:
             Environment: ${env:environment}
             SPOTIPY_CLIENT_ID: ${env:SPOTIPY_CLIENT_ID}
             SPOTIPY_CLIENT_SECRET: ${env:SPOTIPY_CLIENT_SECRET}
+            SPOTIPY_REDIRECT_URI: ${env:SPOTIPY_REDIRECT_URI}
     spotify-ml-api:
         name: ${env:environment}-spotify-ml-api
         handler: spotify_ml/api/spotify_ml_api_lambda_function.lambda_handler
         timeout: 10
+        package:
+            include:
+                - spotify_ml/services/spotify_service.py
+                - spotify_ml/helpers/env_helper.py
+                - spotify_ml/helpers/kmeans_helpers.py
         events:
             - http: ANY /
             - http: 'ANY {proxy+}'
