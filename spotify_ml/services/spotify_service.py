@@ -53,6 +53,7 @@ class SpotifyService:
         for album in results['albums']['items']:
             if album['release_date'] == friday:
                 new_albums.append(album)
+                print(album['name'])
 
         while results is not None:
             results = sp.next(results['albums'])
@@ -60,6 +61,7 @@ class SpotifyService:
                 for album in results['albums']['items']:
                     if album['release_date'] == friday:
                         new_albums.append(album)
+                        print(album['name'])
 
         return new_albums
     
