@@ -6,8 +6,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope), requests_timeout=10
 
 class SpotifyService:
 
-    def __init__(self):
-        pass
+    def __init__(self, friday_helper):
+        self.friday_helper = friday_helper
 
     def get_new_tracks_analysis_and_features(self):
         new_tracks_analysis_and_features = []
@@ -47,16 +47,19 @@ class SpotifyService:
         return new_tracks
 
     def get_new_albums(self):
+        friday = self.friday_helper.get_most_recent_friday().strftime("%Y-%m-%d")
         new_albums = []
         results = sp.new_releases(limit=50)
         for album in results['albums']['items']:
+            if album['release_date'] == friday:
                 new_albums.append(album)
 
         while results is not None:
             results = sp.next(results['albums'])
             if results is not None:
                 for album in results['albums']['items']:
-                    new_albums.append(album)
+                    if album['release_date'] == friday:
+                        new_albums.append(album)
 
         return new_albums
     
@@ -71,3 +74,11 @@ class SpotifyService:
     def get_track_features(self, track):
         results = sp.audio_features(track['id'])
         return results
+
+    def search_for_track(self, track, artist):
+        search_results = sp.search(q='artist:' + artist + ' track:' + track, type='track')
+        return search_results
+
+    def get_track(self, track_id):
+        track = sp.track(track_id)
+        return track

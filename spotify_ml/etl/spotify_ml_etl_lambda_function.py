@@ -3,6 +3,7 @@ sys.path.append('spotify_ml')
 
 from services.spotify_service import SpotifyService
 from helpers.env_helper import EnvHelper
+from helpers.friday_helper import FridayHelper
 import boto3
 import json
 import pandas as pd
@@ -10,7 +11,8 @@ import io
 import gzip
 
 session = boto3.Session()
-spotify_service = SpotifyService()
+friday_helper = FridayHelper()
+spotify_service = SpotifyService(friday_helper)
 env_helper = EnvHelper()
 
 def lambda_handler(event, context):
@@ -87,3 +89,6 @@ def lambda_handler(event, context):
     # write stream to S3
     s3_object = s3.Object(bucket_name, 'spotify_analysis.csv')
     s3_object.put(Body=gz_buffer.getvalue())
+
+if __name__ == "__main__":
+    lambda_handler(None, None)
