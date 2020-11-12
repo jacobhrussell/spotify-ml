@@ -23,7 +23,7 @@ functions:
     spotify-ml-api:
         name: ${env:environment}-spotify-ml-api
         handler: spotify_ml/api/spotify_ml_api_lambda_function.lambda_handler
-        timeout: 30
+        timeout: 60
         package:
             include:
                 - spotify_ml/services/spotify_service.py
