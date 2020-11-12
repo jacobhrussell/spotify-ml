@@ -38,6 +38,8 @@ def get_recommended_songs():
 def get_search_song():
     track = request.args.get("track", None)
     artist = request.args.get("artist", None)
+    print(track)
+    print(artist)
     search_results = spotify_service.search_for_track(track, artist)
     return jsonify(status=200, response=search_results)
 
