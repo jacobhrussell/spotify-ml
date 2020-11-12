@@ -20,6 +20,10 @@ def lambda_handler(event, context):
     else:
         return 400
 
+@app.route('/test', methods=['GET'])
+def get_test():
+    return jsonify(status=200, response="Hello world")
+
 @app.route('/recommended-songs', methods=['GET'])
 def get_recommended_songs():
     track_id = request.args.get("track", None)

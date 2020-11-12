@@ -69,7 +69,7 @@ class KmeansHelper:
         cluster_neighbors = scaled_data[is_in_cluster]
         distances = cluster_neighbors['distance_to_centroid']
         for i in range(num_to_recommend):
-            index = get_closest_value(distances, distance)
+            index = self.get_closest_value(distances, distance)
             recommended_track_ids.append(scaled_data.iloc[[distances.index[index]]]["track_id"].values[0])
             distances = distances.drop([distances.index[index]])
         return recommended_track_ids
