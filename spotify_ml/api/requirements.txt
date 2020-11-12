@@ -1,3 +1,4 @@
 flask
 aws-wsgi
 requests
+sklearn
